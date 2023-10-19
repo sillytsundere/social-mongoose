@@ -1,4 +1,4 @@
-const User = require("../Models");
+const { User } = require("../Models");
 
 module.exports = {
   // Get all users
@@ -10,12 +10,11 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  // Get a single user
+  // Get a single user by userId
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId }).select(
-        "-__v"
-      );
+      const user = await User.findOne({ _id: req.params.userId })
+      .select("-__v");
 
       if (!user) {
         return res.status(404).json({ message: "No user with that ID" });
@@ -56,6 +55,7 @@ module.exports = {
   // Delete a user
   async deleteUser(req, res) {
     try {
+      //for loop to find all thoughts with user id and delete before deleting user
       const user = await User.findOneAndRemove({ _id: req.params.userId });
 
       if (!user) {
