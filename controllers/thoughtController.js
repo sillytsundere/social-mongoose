@@ -24,8 +24,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  //post/create a new thought
-  //don't forget to push the created thought's _id to the associated user's thoughts array field)
+  //create a new thought
   async createThought(req, res) {
     try {
       const thought = await Thought.create(req.body);
@@ -47,7 +46,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  //put/update a thought by its id
+  //update a thought by its id
   async updateThought(req, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
@@ -65,7 +64,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  //delete/remove a thought by its id
+  //delete a thought by its id
   async deleteThought(req, res) {
     try {
       const thought = await Thought.findOneAndRemove({
@@ -77,7 +76,11 @@ module.exports = {
           .json({ message: "No thought found with this ID" });
       }
 
-      const user = await User.findOneAndUpdate(); //HEREHEREHERENOTDONE
+      const user = await User.findOneAndUpdate(
+        { thoughts: req.params.thoughtId },
+        { $pull: { thoughts: req.params.thoughtId } },
+        { new: true }
+      );
     } catch (err) {
       res.status(500).json(err);
     }
