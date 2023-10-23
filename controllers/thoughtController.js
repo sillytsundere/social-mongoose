@@ -85,7 +85,38 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  //post/create a reaction stored in a single thought's reactions array
-
+  //create a reaction stored in a single thought's reactions array
+  async addReaction({ params }, res) {
+    try {
+      const thought = await Thought.findOneAndUpdate(
+        { _id: params.thoughtId },
+        { $push: { reactions: params.reactionId } },
+        { runValidators: true, new: true }
+      );
+      if (!thought) {
+        return res.status(404).json({ message: "No thought with that ID" });
+      } else {
+        res.status(200).json({ message: "Reaction successfully added!" });
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
   //delete to pull and remove a reaction by the reaction's reactionId value
+  async deleteReaction({ params }, res) {
+    try {
+      const thought = await Thought.findOneAndUpdate(
+        { _id: params.thoughtId },
+        { $pull: { reaction: params.reactionId } },
+        { runValidators: true, new: true }
+      );
+      if (!thought) {
+        return res.status(404).json({ message: "No thought with that ID" });
+      } else {
+        res.status(200).json({ message: "Reaction successfully deleted!" });
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
 };
