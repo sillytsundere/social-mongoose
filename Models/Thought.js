@@ -1,5 +1,6 @@
 const { Schema, Types, model } = require('mongoose');
 const reactionSchema = require('./Reaction.js');
+const dateFormat = require('../utils/dateFormat.js');
 
 const thoughtSchema = new Schema(
     {
@@ -12,9 +13,7 @@ const thoughtSchema = new Schema(
         createdAt: {
             type: Date,
             default: Date.now(),
-            //use a getter method to format the timestamp on query
-            //default: function() {write date format function in here},
-            //use a virtual to make the format time function
+            get: dateFormat
         },
         //the user that created this thought
         username: {
@@ -35,9 +34,7 @@ const thoughtSchema = new Schema(
 thoughtSchema.virtual('reactionCount').get(function() {
     return this.reactions.length;
 });
-thoughtSchema.virtual('formatTime').get(function() {
-    
-})
+
 const Thought = model('Thought', thoughtSchema);
 
 module.exports = Thought;
