@@ -82,16 +82,19 @@ module.exports = {
         { $pull: { thoughts: req.params.thoughtId } },
         { new: true }
       );
+
+      res.status(200).json({ message: "Thought successfully deleted and removed from user's thoughts" });
+
     } catch (err) {
       res.status(500).json(err);
     }
   },
   //create a reaction stored in a single thought's reactions array
-  async addReaction({ params }, res) {
+  async addReaction({ params, body }, res) {
     try {
       const thought = await Thought.findOneAndUpdate(
         { _id: params.thoughtId },
-        { $push: { reactions: params.reactionId } },
+        { $push: { reactions: body } },
         { runValidators: true, new: true }
       );
       if (!thought) {
@@ -108,7 +111,7 @@ module.exports = {
     try {
       const thought = await Thought.findOneAndUpdate(
         { _id: params.thoughtId },
-        { $pull: { reaction: params.reactionId } },
+        { $pull: { reactions: { reactionId: params.reactionId } } },
         { runValidators: true, new: true }
       );
       if (!thought) {
