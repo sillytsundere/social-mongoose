@@ -1,12 +1,10 @@
-const { User } = require("../Models");
+const { User, Thought } = require("../Models");
 
 module.exports = {
   // Get all users
   async getUsers(req, res) {
     try {
-      const users = await User.find()
-      .select("-__v")
-      .populate('thoughts');
+      const users = await User.find().select("-__v").populate("thoughts");
       res.json(users);
     } catch (err) {
       res.status(500).json(err);
@@ -16,8 +14,8 @@ module.exports = {
   async getSingleUser(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.userId })
-      .select("-__v")
-      .populate('thoughts');
+        .select("-__v")
+        .populate("thoughts");
 
       if (!user) {
         return res.status(404).json({ message: "No user with that ID" });
@@ -58,18 +56,29 @@ module.exports = {
   // Delete a user
   async deleteUser(req, res) {
     try {
-      //for loop to find all thoughts with user id and delete before deleting user
-      // for(let i = 0; i < thoughts.length; i++) {
-      //   //find all thoughts belonging to user and delete them before deleting the user
-      //   // const thought = await Thought.findOneAndRemove({ username})
-      // }
-      const user = await User.findOneAndRemove({ _id: req.params.userId });
+      //first delete the specified user
+      const deletedUser = await User.findOneAndRemove({
+        _id: req.params.userId,
+      });
 
-      if (!user) {
+      if (!deletedUser) {
         return res.status(404).json({ message: "No user with that ID" });
-      } else {
-        res.status(200).json({ message: "User successfully deleted!" });
       }
+
+      //delete all thoughts associated with that user
+      const userThoughts = await Thought.deleteMany({
+        _id: { $in: deletedUser.thoughts },
+      });
+
+      if (!userThoughts) {
+        return res
+          .status(404)
+          .json({ message: "No thoughts found with that user ID" });
+      }
+
+      res
+        .status(200)
+        .json({ message: "User and user's Thoughts successfully deleted!" });
     } catch (err) {
       res.status(500).json(err);
     }
@@ -107,5 +116,5 @@ module.exports = {
     } catch (err) {
       res.status(500).json(err);
     }
-  }
+  },
 };
