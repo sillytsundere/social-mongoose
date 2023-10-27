@@ -4,8 +4,6 @@
 
 This web application is a social network API which utilizes Express.js for routing, a MongoDB database and the Mongoose ODM. This social network API allows users to share thoughts, react to thoughts and add friends. Users can also remove friends, reactions, thoughts and delete their accounts.
 
-# Table of Contents
-
 ## Installation
 
 To run this application, first download the repository and open in your preferred code editor. Run `npm install` to download the necessary npm package dependencies, found in the package.json. These dependencies can be found listed in the package.json file. If you wish to seed the database with the data from the seed.js file, use the command `npm run seed`. Finally, start the application by running the command `npm run start`.
